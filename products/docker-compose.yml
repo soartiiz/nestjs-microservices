@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  api-product:
+    container_name: api-product
+    image: nestjs-api-dev:1.0.0
+    build:
+      context: .
+      target: development
+      dockerfile: ./Dockerfile
+    command: yarn start:debug
+    ports:
+      - 3001:3001
+      - 9229:9229
+    networks:
+      - product-network
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+  database-product:
+    container_name: database-product
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: product
+    volumes:
+      - ./pgdata:/data
+    ports:
+      - "5432:5432"
+    networks:
+      - product-network
+  pgadmin:
+    container_name: pgadmin-product
+    links:
+      - database-product:postgres
+    image: dpage/pgadmin4
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin:/root/.pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@soartiz.fr
+      PGADMIN_DEFAULT_PASSWORD: dev
+    networks:
+      - product-network
+
+volumes:
+  pgdata:
+  pgadmin:
+
+networks:
+  product-network:

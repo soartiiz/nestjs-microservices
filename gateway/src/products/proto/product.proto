@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package product;
+
+service ProductsService {
+  rpc find (query) returns (Products) {}
+  rpc create (body) returns (Product) {}
+}
+
+message query {
+  string name = 1;
+}
+
+message body {
+  string name = 1;
+  int32 price = 2;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  int32 price = 3;
+}
+
+message Products {
+  repeated Product products = 1;
+}
